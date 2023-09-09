@@ -7,22 +7,16 @@ Entity.default_shader = lit
 def update():
     global fuel, current_target_index
 
-    if not plane: return
-
     # Hedef noktaya doğru uçağı hareket ettirin
     target_point = target_points[current_target_index]
-    # direction = Vec3(target_point[0] - plane.x, target_point[1] - plane.y, target_point[2] - plane.z)
+    
     plane.look_at_2d(Vec3(target_point), axis="y")
-    # direction.normalize()
+    
     if plane.fly : plane.position += plane.forward * 0.05  # Uçak hızı ayarlayın
 
     # Hedef noktaya ulaşıldığında bir sonraki hedefe geçin
     if distance(plane.position, target_point) < 0.1:
         current_target_index = (current_target_index + 1) % len(target_points)
-
-    # # Rastgele hareket için uçağı güncelleyin
-    # plane.x += random.uniform(-0.1, 0.1)
-    # plane.z += random.uniform(-0.1, 0.1)
 
     # Yakıtı azaltın
     fuel -= 0.1  # Örneğin, her güncelleme döngüsünde 0.1 birim yakıt azalıyor
@@ -51,7 +45,7 @@ health_bar.y = 1.5  # Sağlık çubuğunu uçağın üstüne yerleştirin
 fuel = 100.0  # Örneğin, başlangıçta 100 birim yakıt
 
 # Uçağın uçacağı 5 farklı hedef nokta belirleyin
-target_points = [(300, 15, 300), (-300, 15, 300), (250, 15, -200), (-150, 15, -350), (0, 15, 0)]
+target_points = [(3, 15, 3), (-3, 15, 3), (25, 15, -20), (-15, 15, -3), (0, 15, 0)]
 current_target_index = 0
 
 ground = Entity(model="plane", texture="grass", scale=200)
