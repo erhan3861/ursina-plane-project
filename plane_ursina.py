@@ -1,11 +1,14 @@
 from ursina import *
 import random
 from ursina.shaders import basic_lighting_shader as bls, lit_with_shadows_shader as lit
+from ursina import curve
 
 Entity.default_shader = lit
 
 def update():
     global fuel, current_target_index
+
+    if not plane : return
 
     # Hedef noktaya doğru uçağı hareket ettirin
     target_point = target_points[current_target_index]
@@ -23,13 +26,18 @@ def update():
 
     # Yakıt çubuğunu güncelleyin
     health_percentage = fuel / 100.0  # Sağlık çubuğunu yakıt miktarına göre güncelleyin
-    health_bar.scale_x = max(health_percentage, 0)*7  # Sağlık çubuğu negatif değer almasın
+    if health_percentage < 0.002:
+        health_percentage = 0.01
+
+    print("health_percentage = ", health_percentage)
+    health_bar.scale_x = health_percentage * 7  # Sağlık çubuğu negatif değer almasın
 
     # Yakıt tükendiğinde oyunu sonlandırın
     if fuel <= 0 and plane.fly:
-        plane.animate('y', 0, duration=1)
+        print("hata1")
+        plane.animate('y', 0, duration=3, curve = curve.linear)
+        invoke(destroy, plane, delay=5)
         plane.fly = False
-
 
 
 app = Ursina()
@@ -52,7 +60,7 @@ ground = Entity(model="plane", texture="grass", scale=200)
 
 Sky()
 
-EditorCamera()
+EditorCamera(y=30)
 
 sun = DirectionalLight() # yönlendirilmiş ışık 
 sun.look_at((-1, -1, 1))
